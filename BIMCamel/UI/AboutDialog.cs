@@ -57,7 +57,7 @@ namespace BIMCamel.UI
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var logo = LoadLogo("otter_32.png");
+            var logo = LoadLogo("otter_64.png");
             if (logo != null)
             {
                 var img = new Image { Source = logo, Width = 44, Height = 44, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 2, 14, 0) };
