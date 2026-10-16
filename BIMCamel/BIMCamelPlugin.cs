@@ -6,28 +6,28 @@ using Autodesk.Navisworks.Api.Plugins;
 namespace BIMCamel
 {
     /// <summary>
-    /// Ribbon command that toggles the Uttern IFC exporter dock pane.
-    /// The XAML layout (Uttern.xaml) must deploy to an en-US\ subfolder next to the DLL.
+    /// Ribbon command that toggles the BIMuttern IFC exporter dock pane.
+    /// The XAML layout (BIMuttern.xaml) must deploy to an en-US\ subfolder next to the DLL.
     /// </summary>
-    [Plugin("Uttern.Command", "Uttern",
-        DisplayName = "Uttern",
+    [Plugin("BIMuttern.Command", "BIMuttern",
+        DisplayName = "BIMuttern",
         ToolTip = "Fast Navisworks → IFC export (IFC4 / IFC2x3)")]
-    [RibbonLayout("Uttern.xaml")]
-    [RibbonTab("ID_Tab_Uttern")]
+    [RibbonLayout("BIMuttern.xaml")]
+    [RibbonTab("ID_Tab_BIMuttern")]
     [Command("ID_Button_OpenPane",
         DisplayName = "IFC exporter",
         Icon = "Resources\\export_16.png",
         LargeIcon = "Resources\\export_32.png",
-        ToolTip = "Open the Uttern IFC exporter panel")]
+        ToolTip = "Open the BIMuttern IFC exporter panel")]
     [Command("ID_Button_About",
         DisplayName = "About",
         Icon = "Resources\\otter_16.png",
         LargeIcon = "Resources\\otter_32.png",
-        ToolTip = "About Uttern")]
+        ToolTip = "About BIMuttern")]
     public class BIMCamelPlugin : CommandHandlerPlugin
     {
         // The dock-pane lookup key is "<pluginId>.<developerId>".
-        private const string DockPaneKey = "Uttern.ExportDockPane.Uttern";
+        private const string DockPaneKey = "BIMuttern.ExportDockPane.BIMuttern";
 
         public override int ExecuteCommand(string commandId, params string[] parameters)
         {
@@ -42,9 +42,9 @@ namespace BIMCamel
                 if (record == null)
                 {
                     ShowError(
-                        "The Uttern exporter panel is not registered with Navisworks " +
+                        "The BIMuttern exporter panel is not registered with Navisworks " +
                         "(looked up \"" + DockPaneKey + "\" and found nothing).\n\n" +
-                        "This almost always means the Uttern.dll in this Navisworks year folder was built " +
+                        "This almost always means the BIMuttern.dll in this Navisworks year folder was built " +
                         "against a different Navisworks release. A DLL built for the wrong year still loads its " +
                         "ribbon button but its dock pane silently fails to register.\n\n" +
                         "Fix: install the build that matches this Navisworks version " +
@@ -54,7 +54,7 @@ namespace BIMCamel
 
                 if (!(record is DockPanePluginRecord dockRecord))
                 {
-                    ShowError("The Uttern panel registered as an unexpected plugin type: " +
+                    ShowError("The BIMuttern panel registered as an unexpected plugin type: " +
                               record.GetType().Name + ".");
                     return 0;
                 }
@@ -65,12 +65,12 @@ namespace BIMCamel
                 if (dockRecord.LoadedPlugin is DockPanePlugin dockPane)
                     dockPane.Visible = !dockPane.Visible;
                 else
-                    ShowError("The Uttern panel failed to load (LoadedPlugin was " +
+                    ShowError("The BIMuttern panel failed to load (LoadedPlugin was " +
                               (dockRecord.LoadedPlugin?.GetType().Name ?? "null") + ").");
             }
             catch (Exception ex)
             {
-                ShowError("Uttern could not open the IFC exporter panel:\n\n" + ex);
+                ShowError("BIMuttern could not open the IFC exporter panel:\n\n" + ex);
             }
 
             return 0;
@@ -81,7 +81,7 @@ namespace BIMCamel
         // Surface it to the user instead.
         internal static void ShowError(string message) =>
             System.Windows.Forms.MessageBox.Show(
-                message, "Uttern",
+                message, "BIMuttern",
                 System.Windows.Forms.MessageBoxButtons.OK,
                 System.Windows.Forms.MessageBoxIcon.Warning);
 

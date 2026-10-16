@@ -1,9 +1,9 @@
-> ## This fork is Uttern
-> `VilhelmH-git/bimcamel-ifc-exporter` builds **Uttern**: this exporter under its own name, with
+> ## This fork is BIMuttern
+> `VilhelmH-git/bimcamel-ifc-exporter` builds **BIMuttern**: this exporter under its own name, with
 > element-level instancing, a fix for instanced objects being copied many times, and optional
-> mesh simplification. It ships as `Uttern.dll` / `Uttern.bundle` with its own plugin ids and
+> mesh simplification. It ships as `BIMuttern.dll` / `BIMuttern.bundle` with its own plugin ids and
 > ribbon tab, so it never replaces an upstream BIMCamel install. It is released on
-> [VilhelmH-git/Uttern-releases](https://github.com/VilhelmH-git/Uttern-releases) by
+> [VilhelmH-git/BIMuttern-releases](https://github.com/VilhelmH-git/BIMuttern-releases) by
 > `packaging/new_release.ps1` and installed through BoomerHubb. The C# namespaces keep the
 > `BIMCamel` name so upstream changes still merge. Everything below is upstream's README.
 

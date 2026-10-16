@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Uttern: an otter's face. Master for otter_16.png / otter_32.png (tools/make_icons.mjs). -->
+  <!-- BIMuttern: an otter's face. Master for otter_16.png / otter_32.png (tools/make_icons.mjs). -->
   <circle cx="9" cy="27" r="4.5" fill="#6B4226"/>
   <circle cx="55" cy="27" r="4.5" fill="#6B4226"/>
   <ellipse cx="32" cy="36" rx="27" ry="21" fill="#8A5A36"/>

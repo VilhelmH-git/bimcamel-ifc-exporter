@@ -627,9 +627,9 @@ namespace BIMCamel.Ifc
             }
 
             int person = w.Write($"IFCPERSON($,$,{Str(author)},$,$,$,$,$)");
-            int org = w.Write("IFCORGANIZATION($,'Uttern',$,$,$)");
+            int org = w.Write("IFCORGANIZATION($,'BIMuttern',$,$,$)");
             int pao = w.Write($"IFCPERSONANDORGANIZATION({Ref(person)},{Ref(org)},$)");
-            int app = w.Write($"IFCAPPLICATION({Ref(org)},'0.1','Uttern','Uttern')");
+            int app = w.Write($"IFCAPPLICATION({Ref(org)},'0.1','BIMuttern','BIMuttern')");
             long ts = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             // IFC4's CorrectChangeAction rule forbids .ADDED. without a LastModifiedDate, but
             // IFC2x3 keeps .ADDED. — its IfcChangeActionEnum has no NOTDEFINED member.

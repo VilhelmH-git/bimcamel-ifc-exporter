@@ -430,7 +430,7 @@
             <Image x:Name="LogoImg" Width="26" Height="26" Stretch="Uniform"/>
           </Border>
           <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
-            <TextBlock Text="Uttern" Foreground="White" FontWeight="SemiBold" FontSize="14.5"/>
+            <TextBlock Text="BIMuttern" Foreground="White" FontWeight="SemiBold" FontSize="14.5"/>
             <TextBlock Text="IFC Exporter" Foreground="#DDFFFFFF" FontSize="10.5"/>
           </StackPanel>
           <StackPanel Grid.Column="2" Orientation="Horizontal">
@@ -823,7 +823,7 @@
                 <TextBlock Style="{StaticResource Lbl}" Text="Classification system name"/>
                 <TextBox x:Name="TxtClassSystem" ToolTip="Name of the classification system the codes in the grid belong to, e.g. “Uniclass 2015” or “OmniClass”. Written as IfcClassification.Name; blank falls back to a generic source label."/>
                 <TextBlock Style="{StaticResource Lbl}" Text="Published by" Margin="0,11,0,5"/>
-                <TextBox x:Name="TxtClassSource" ToolTip="Who publishes the classification, e.g. “NBS” for Uniclass. Written as IfcClassification.Source, which IFC2x3 makes mandatory — leave it blank and the system name is used. It is never this exporter’s name: a file claiming Uttern publishes Uniclass is a false statement in a deliverable."/>
+                <TextBox x:Name="TxtClassSource" ToolTip="Who publishes the classification, e.g. “NBS” for Uniclass. Written as IfcClassification.Source, which IFC2x3 makes mandatory — leave it blank and the system name is used. It is never this exporter’s name: a file claiming BIMuttern publishes Uniclass is a false statement in a deliverable."/>
                 <TextBlock Style="{StaticResource Lbl}" Text="Edition" Margin="0,11,0,5"/>
                 <TextBox x:Name="TxtClassEdition" ToolTip="Which edition, e.g. “2015”. Uniclass 2015 and Uniclass 1997 are different tables with overlapping codes, so this is what tells the other end whether a code means what they think it means. Mandatory in IFC2x3, where an unstated edition is written as “-”."/>
                 <TextBlock Style="{StaticResource Lbl}" Text="Edition date (YYYY-MM-DD)" Margin="0,11,0,5"/>
@@ -925,7 +925,7 @@
                   <Border Style="{StaticResource BadgeOpt}"><TextBlock Text="OPTIONAL" FontSize="9.5" FontWeight="SemiBold" Foreground="#6B7480"/></Border>
                 </StackPanel>
                 <TextBlock Style="{StaticResource Lbl}" Text="Project name"/>
-                <TextBox x:Name="TxtProject" Text="Uttern Export" ToolTip="Name written to the IfcProject."/>
+                <TextBox x:Name="TxtProject" Text="BIMuttern Export" ToolTip="Name written to the IfcProject."/>
                 <TextBlock Style="{StaticResource Lbl}" Text="Site name" Margin="0,11,0,5"/>
                 <TextBox x:Name="TxtSite" Text="Site" ToolTip="Name written to the IfcSite."/>
                 <TextBlock Style="{StaticResource Lbl}" Text="Building name" Margin="0,11,0,5"/>

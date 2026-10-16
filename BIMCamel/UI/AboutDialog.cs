@@ -13,7 +13,7 @@ namespace BIMCamel.UI
 {
     /// <summary>
     /// The About dialog — shown from the ribbon "About" button. Borderless black-and-white
-    /// window in upstream BIMCamel's design. This fork is called Uttern; the dialog says so and
+    /// window in upstream BIMCamel's design. This fork is called BIMuttern; the dialog says so and
     /// credits BIMCamel, whose MIT-licensed exporter it is built on. Built in code (no XAML) so the identical file
     /// can live in each plug-in's project regardless of its xaml build configuration; WPF layout
     /// (wrapping + SizeToContent) means nothing can clip.
@@ -37,7 +37,7 @@ namespace BIMCamel.UI
 
             var window = new Window
             {
-                Title = "About Uttern",
+                Title = "About BIMuttern",
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
                 Background = Brushes.Transparent,
@@ -68,7 +68,7 @@ namespace BIMCamel.UI
             var titles = new StackPanel();
             titles.Children.Add(new TextBlock
             {
-                Text = "Uttern",
+                Text = "BIMuttern",
                 Foreground = Paper,
                 FontSize = 20,
                 FontWeight = FontWeights.SemiBold,
@@ -91,7 +91,7 @@ namespace BIMCamel.UI
 
             body.Children.Add(new TextBlock
             {
-                Text = "Uttern is a fork of the free BIMCamel IFC Exporter (MIT licence). Source and changes:",
+                Text = "BIMuttern is a fork of the free BIMCamel IFC Exporter (MIT licence). Source and changes:",
                 Foreground = Paper70,
                 FontSize = 13,
                 TextWrapping = TextWrapping.Wrap,

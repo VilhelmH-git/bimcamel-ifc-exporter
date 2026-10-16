@@ -20,14 +20,14 @@ namespace BIMCamel.UI
     {
         // The fork's own releases, not upstream BIMCamel's: offering theirs would replace this build.
         private const string Owner = "VilhelmH-git";
-        private const string Repo = "Uttern-releases";
-        private const string ProductName = "Uttern";
+        private const string Repo = "BIMuttern-releases";
+        private const string ProductName = "BIMuttern";
         private const string DownloadPage = "https://github.com/" + Owner + "/" + Repo + "/releases/latest";
 
-        // %APPDATA%\Uttern\update-check.txt: "<last check yyyy-MM-dd>|<last version offered>"
+        // %APPDATA%\BIMuttern\update-check.txt: "<last check yyyy-MM-dd>|<last version offered>"
         private static readonly string StatePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Uttern", "update-check.txt");
+            "BIMuttern", "update-check.txt");
 
         private static bool _ranThisSession;
 
@@ -92,7 +92,7 @@ namespace BIMCamel.UI
 
             var request = (HttpWebRequest)WebRequest.Create(
                 "https://api.github.com/repos/" + Owner + "/" + Repo + "/releases/latest");
-            request.UserAgent = "Uttern-UpdateCheck";
+            request.UserAgent = "BIMuttern-UpdateCheck";
             request.Accept = "application/vnd.github+json";
             request.Timeout = 10000;
             request.ReadWriteTimeout = 10000;

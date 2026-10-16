@@ -85,11 +85,11 @@ namespace BIMCamel.UI
             UpdateCheck.Run(action => Dispatcher.BeginInvoke(action));
         }
 
-        // Show the Uttern logo. Prefer the embedded resource; fall back to the loose icon next
+        // Show the BIMuttern logo. Prefer the embedded resource; fall back to the loose icon next
         // to the assembly (the bundle ships Resources\otter_32.png alongside the DLL).
         private void SetLogo()
         {
-            try { LogoImg.Source = new BitmapImage(new Uri("pack://application:,,,/Uttern;component/Resources/otter_32.png")); return; }
+            try { LogoImg.Source = new BitmapImage(new Uri("pack://application:,,,/BIMuttern;component/Resources/otter_32.png")); return; }
             catch { }
             try
             {
@@ -696,7 +696,7 @@ namespace BIMCamel.UI
                 var coords = BuildCoords();
                 var names = new SpatialNames
                 {
-                    Project = Def(TxtProject.Text, "Uttern Export"), Site = Def(TxtSite.Text, "Site"),
+                    Project = Def(TxtProject.Text, "BIMuttern Export"), Site = Def(TxtSite.Text, "Site"),
                     Building = Def(TxtBuilding.Text, "Building"), Storey = Def(TxtStorey.Text, "Storey"),
                     // Real storey elevations, when the model's grids name the levels.
                     LevelElevations = ModelSurvey.LevelElevations(doc, unitScale),
@@ -774,7 +774,7 @@ namespace BIMCamel.UI
             {
                 SetStatus("Export failed: " + ex.Message);
                 SetReport("Export FAILED\n──────────────────────────────\n" + ex.Message);
-                WF.MessageBox.Show(ex.ToString(), "Uttern export — error", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error);
+                WF.MessageBox.Show(ex.ToString(), "BIMuttern export — error", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error);
             }
             finally { EndBusy(); }
         }
@@ -923,7 +923,7 @@ namespace BIMCamel.UI
 
             string? openTarget = summary.Files.Count == 1 ? summary.Files[0] : (summary.Files.Count > 0 ? System.IO.Path.GetDirectoryName(summary.Files[0]) : null);
             if (openTarget != null && WF.MessageBox.Show($"Exported {summary.FileCount} file(s) · {summary.ElementCount:N0} elements ({summary.FileSizeBytes / 1024.0:N0} KB).\n\nOpen now?",
-                    "Uttern export complete", WF.MessageBoxButtons.YesNo, WF.MessageBoxIcon.Information) == WF.DialogResult.Yes)
+                    "BIMuttern export complete", WF.MessageBoxButtons.YesNo, WF.MessageBoxIcon.Information) == WF.DialogResult.Yes)
             {
                 try { Process.Start(new ProcessStartInfo(openTarget) { UseShellExecute = true }); }
                 catch { try { Process.Start("explorer.exe", $"\"{openTarget}\""); } catch { } }
@@ -964,7 +964,7 @@ namespace BIMCamel.UI
                     // Stop is not a "no section box" problem: let it unwind rather
                     // than popping a message box that blames the user's setup.
                     catch (OperationCanceledException) { throw; }
-                    catch (Exception sx) { SetStatus(sx.Message); WF.MessageBox.Show(sx.Message, "Uttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Information); return null; }
+                    catch (Exception sx) { SetStatus(sx.Message); WF.MessageBox.Show(sx.Message, "BIMuttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Information); return null; }
                 case 3:
                     int si = CmbSavedSet.SelectedIndex;
                     if (_sets.Count == 0 || si < 0 || si >= _sets.Count) { SetStatus("Pick a saved set (Scope = Saved set)."); return null; }
@@ -1655,7 +1655,7 @@ namespace BIMCamel.UI
         {
             double tps = ms > 0 ? s.TriangleCount / (ms / 1000.0) : 0;
             var sb = new StringBuilder();
-            sb.AppendLine("Uttern IFC export report");
+            sb.AppendLine("BIMuttern IFC export report");
             sb.AppendLine("──────────────────────────────");
             sb.AppendLine(s.FileCount > 1
                 ? $"Files       : {s.FileCount}  (first: {System.IO.Path.GetFileName(s.Path)})"
@@ -1839,21 +1839,21 @@ namespace BIMCamel.UI
         {
             try
             {
-                using var sfd = new WF.SaveFileDialog { Title = "Save Uttern profile", Filter = "Uttern profile (*.json)|*.json", FileName = "uttern_profile.json", DefaultExt = "json" };
+                using var sfd = new WF.SaveFileDialog { Title = "Save BIMuttern profile", Filter = "BIMuttern profile (*.json)|*.json", FileName = "bimuttern_profile.json", DefaultExt = "json" };
                 if (sfd.ShowDialog() != WF.DialogResult.OK) return;
                 ExportProfile.Save(Capture(), sfd.FileName); SetStatus("Profile saved.");
             }
-            catch (Exception ex) { WF.MessageBox.Show(ex.Message, "Uttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error); }
+            catch (Exception ex) { WF.MessageBox.Show(ex.Message, "BIMuttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error); }
         }
         private void OnLoadProfile(object s, RoutedEventArgs e)
         {
             try
             {
-                using var ofd = new WF.OpenFileDialog { Title = "Load Uttern profile", Filter = "Uttern profile (*.json)|*.json" };
+                using var ofd = new WF.OpenFileDialog { Title = "Load BIMuttern profile", Filter = "BIMuttern profile (*.json)|*.json" };
                 if (ofd.ShowDialog() != WF.DialogResult.OK) return;
                 Apply(ExportProfile.Load(ofd.FileName)); SetStatus("Profile loaded.");
             }
-            catch (Exception ex) { WF.MessageBox.Show(ex.Message, "Uttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error); }
+            catch (Exception ex) { WF.MessageBox.Show(ex.Message, "BIMuttern", WF.MessageBoxButtons.OK, WF.MessageBoxIcon.Error); }
         }
         private ExportProfile Capture() => new ExportProfile
         {
@@ -2024,7 +2024,7 @@ namespace BIMCamel.UI
         {
             try { var fn = doc.FileName; if (!string.IsNullOrEmpty(fn)) return System.IO.Path.GetFileNameWithoutExtension(fn); }
             catch { }
-            return "Uttern_export";
+            return "BIMuttern_export";
         }
     }
 }

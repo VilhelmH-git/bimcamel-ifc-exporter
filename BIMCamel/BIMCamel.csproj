@@ -7,11 +7,11 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
-    <AssemblyName>Uttern</AssemblyName>
+    <AssemblyName>BIMuttern</AssemblyName>
     <RootNamespace>BIMCamel</RootNamespace>
     <PlatformTarget>x64</PlatformTarget>
     <OutputType>Library</OutputType>
-    <Product>Uttern</Product>
+    <Product>BIMuttern</Product>
     <Company>VilhelmH-git</Company>
 
     <!-- Assembly version, read at runtime by the update check and About box. Bump in lockstep
@@ -55,7 +55,7 @@
     <NavisPkgVersion Condition="'$(NavisPkgVersion)' == '' and '$(NavisworksYear)' == '2026'">2026.0.1</NavisPkgVersion>
     <NavisPkgVersion Condition="'$(NavisPkgVersion)' == '' and '$(NavisworksYear)' == '2027'">2027.0.0</NavisPkgVersion>
 
-    <BundleRoot>$(APPDATA)\Autodesk\ApplicationPlugins\Uttern.bundle</BundleRoot>
+    <BundleRoot>$(APPDATA)\Autodesk\ApplicationPlugins\BIMuttern.bundle</BundleRoot>
   </PropertyGroup>
 
   <!-- ── Navisworks API references from NuGet (default — no Navisworks install needed) ──────────
@@ -109,9 +109,9 @@
        hand-authored Navisworks markup, so remove it from Page compilation and keep it as
        plain content (the WPF dock-pane view under UI\ is still compiled as a Page). ── -->
   <ItemGroup>
-    <Page Remove="Uttern.xaml" />
-    <None Remove="Uttern.xaml" />
-    <Content Include="Uttern.xaml">
+    <Page Remove="BIMuttern.xaml" />
+    <None Remove="BIMuttern.xaml" />
+    <Content Include="BIMuttern.xaml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -144,7 +144,7 @@
           DestinationFolder="$(YearDir)" SkipUnchangedFiles="true" ContinueOnError="true" />
     <Copy SourceFiles="@(DepDlls)"
           DestinationFolder="$(YearDir)" SkipUnchangedFiles="true" ContinueOnError="true" />
-    <Copy SourceFiles="$(ProjectDir)Uttern.xaml"
+    <Copy SourceFiles="$(ProjectDir)BIMuttern.xaml"
           DestinationFolder="$(YearDir)\en-US" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(IconFiles)"
           DestinationFolder="$(YearDir)\Resources" SkipUnchangedFiles="true" ContinueOnError="true" />
@@ -152,7 +152,7 @@
     <Copy SourceFiles="$(ProjectDir)..\PackageContents.xml"
           DestinationFolder="$(BundleRoot)" SkipUnchangedFiles="true" />
 
-    <Message Text="Uttern ($(NavisworksYear), API v$(NavisApiVersion)) deployed to $(YearDir)" Importance="High" />
+    <Message Text="BIMuttern ($(NavisworksYear), API v$(NavisApiVersion)) deployed to $(YearDir)" Importance="High" />
   </Target>
 
 </Project>

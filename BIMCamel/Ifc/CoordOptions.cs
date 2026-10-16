@@ -81,7 +81,7 @@ namespace BIMCamel.Ifc
     /// </summary>
     public sealed class SpatialNames
     {
-        public string Project = "Uttern Export";
+        public string Project = "BIMuttern Export";
         public string Site = "Site";
         public string Building = "Building";
         public string Storey = "Storey";
