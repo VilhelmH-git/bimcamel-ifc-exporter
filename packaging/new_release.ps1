@@ -1,30 +1,30 @@
 <#
 .SYNOPSIS
-    Cuts a release of this BIMCamel fork for BoomerHubb: build 2024-2027, stage the bundle,
-    gate, publish on VilhelmH-git/BIMCamel-releases, point the catalog entry at it.
+    Cuts a release of Uttern (this BIMCamel fork) for BoomerHubb: build 2024-2027, stage the
+    bundle, gate, publish on VilhelmH-git/Uttern-releases, point the catalog entry at it.
 
 .DESCRIPTION
-    This is VilhelmH-git's fork of mrshoma99-rgb/bimcamel-ifc-exporter (MIT). Colleagues get it
-    through BoomerHubb, whose catalog entry "bimcamel" installs the zip's BIMCamel.bundle folder
-    into %APPDATA%\Autodesk\ApplicationPlugins. The upstream .github/workflows/release.yml builds
-    the same bundle in the author's repository; this script is the fork's own path and does not
-    touch theirs.
+    Uttern is VilhelmH-git's fork of mrshoma99-rgb/bimcamel-ifc-exporter (MIT), renamed so it
+    never collides with an upstream BIMCamel install: its own Uttern.dll, Uttern.bundle, plugin
+    ids, ribbon tab and ProductCode. Colleagues get it through BoomerHubb, whose catalog entry
+    "uttern" installs the zip's Uttern.bundle folder into %APPDATA%\Autodesk\ApplicationPlugins.
+    The upstream .github/workflows/release.yml is the author's path and is not used here.
 
       1. Clean tree on main, pushed to the fork; gh, python, the release gate and the catalog
          script are here; no release with this version exists.
-      2. BIMCamel.dll built once per Navisworks year (each must compile against its own year's
+      2. Uttern.dll built once per Navisworks year (each must compile against its own year's
          API, restored from NuGet), with ContinuousIntegrationBuild so no local path is embedded.
-      3. Staged as BIMCamel.bundle\<year>\{BIMCamel.dll, en-US\BIMCamel.xaml, Resources\*.png}
+      3. Staged as Uttern.bundle\<year>\{Uttern.dll, en-US\Uttern.xaml, Resources\*.png}
          plus PackageContents.xml stamped with the version through the XML DOM, LICENSE and
-         README; validated; zipped as BIMCamel-ifc-exporter-v<version>-navisworks.zip.
+         README; validated; zipped as Uttern-v<version>-navisworks.zip.
       4. The release gate (claude-kit\tools\release-scan) over the zip: the releases repository
          is public.
-      5. gh release create on VilhelmH-git/BIMCamel-releases, at the fork's commit.
-      6. claude-kit\tools\catalog\set_entry.py --id bimcamel: every BoomerHubb offers the update.
+      5. gh release create on VilhelmH-git/Uttern-releases, at the fork's commit.
+      6. claude-kit\tools\catalog\set_entry.py --id uttern: every BoomerHubb offers the update.
 
 .EXAMPLE
-    .\packaging\new_release.ps1 -Version 0.11.1 -Notes .\whats-new.md
-    .\packaging\new_release.ps1 -Version 0.11.1 -DryRun
+    .\packaging\new_release.ps1 -Version 0.12.0 -Notes .\whats-new.md
+    .\packaging\new_release.ps1 -Version 0.12.0 -DryRun
 #>
 [CmdletBinding()]
 param(
@@ -35,8 +35,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$releaseRepo = "VilhelmH-git/BIMCamel-releases"
-$catalogId = "bimcamel"
+$releaseRepo = "VilhelmH-git/Uttern-releases"
+$catalogId = "uttern"
 $years = "2024", "2025", "2026", "2027"
 $kit = if ($env:CLAUDE_KIT) { $env:CLAUDE_KIT } else { Join-Path (Split-Path $root -Parent) "claude-kit" }
 $gate = Join-Path $kit "tools\release-scan\scan_package.py"
@@ -83,7 +83,7 @@ try {
     $out = Join-Path $root "out\release"
     if (Test-Path $out) { Remove-Item $out -Recurse -Force }
     $staging = Join-Path $out "staging"
-    $bundle = Join-Path $staging "BIMCamel.bundle"
+    $bundle = Join-Path $staging "Uttern.bundle"
     foreach ($year in $years) {
         Write-Host "2. Building for Navisworks $year"
         $bin = Join-Path $out "bin\$year"
@@ -93,17 +93,17 @@ try {
         }
         $yearDir = Join-Path $bundle $year
         New-Item -ItemType Directory -Force -Path (Join-Path $yearDir "en-US"), (Join-Path $yearDir "Resources") | Out-Null
-        Copy-Item (Join-Path $bin "BIMCamel.dll") $yearDir
-        Copy-Item "BIMCamel/BIMCamel.xaml" (Join-Path $yearDir "en-US")
+        Copy-Item (Join-Path $bin "Uttern.dll") $yearDir
+        Copy-Item "BIMCamel/Uttern.xaml" (Join-Path $yearDir "en-US")
         Copy-Item "BIMCamel/Resources/*.png" (Join-Path $yearDir "Resources")
-        $fileVersion = (Get-Item (Join-Path $yearDir "BIMCamel.dll")).VersionInfo.FileVersion
+        $fileVersion = (Get-Item (Join-Path $yearDir "Uttern.dll")).VersionInfo.FileVersion
         if ($fileVersion -ne "$Version.0") { throw "$year DLL carries version $fileVersion, expected $Version.0." }
     }
 
     # ── 3. Stage, validate, zip ─────────────────────────────────────────────────────────
     Write-Host "3. Staging the bundle"
     # Through the XML DOM, never a string edit: a broken declaration makes Navisworks ignore the bundle.
-    [xml]$manifest = Get-Content "dist/BIMCamel.bundle/PackageContents.xml" -Raw
+    [xml]$manifest = Get-Content "dist/Uttern.bundle/PackageContents.xml" -Raw
     $manifest.ApplicationPackage.Version = "$Version.0"
     $manifestPath = Join-Path $bundle "PackageContents.xml"
     $manifest.Save($manifestPath)
@@ -115,7 +115,7 @@ try {
     }
     Copy-Item "LICENSE" $staging
     Copy-Item "dist/README.md" $staging
-    $zip = Join-Path $out "BIMCamel-ifc-exporter-$tag-navisworks.zip"
+    $zip = Join-Path $out "Uttern-$tag-navisworks.zip"
     Compress-Archive -Path (Join-Path $staging "*") -DestinationPath $zip
     Write-Host ("   {0} ({1:N0} bytes)" -f (Split-Path $zip -Leaf), (Get-Item $zip).Length)
 
@@ -134,7 +134,7 @@ try {
              "SHA-256: ``$((Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant())``"
     Set-Content -Path $notesFile -Value $body -Encoding utf8
     Invoke-Native "gh release create" {
-        gh release create $tag $zip --repo $releaseRepo --title "BIMCamel IFC Exporter $Version" --notes-file $notesFile --latest
+        gh release create $tag $zip --repo $releaseRepo --title "Uttern $Version" --notes-file $notesFile --latest
     }
 
     # ── 6. Catalog ──────────────────────────────────────────────────────────────────────

@@ -1,40 +1,34 @@
-# Manual install (no installer)
+# Uttern — Navisworks → IFC exporter
 
-`BIMCamel.bundle/` is a ready-to-copy Navisworks plug-in bundle. To install without the
-`BIMCamel_Setup.exe` installer:
+`Uttern.bundle/` is a Navisworks plug-in bundle for Navisworks Manage and Simulate 2024-2027.
+Colleagues get it through BoomerHubb, which installs and updates it. To install by hand:
 
-1. Build the plug-in **against the Navisworks year you run** and drop the resulting
-   **`BIMCamel.dll`** into the matching year folder (`2024/`, `2025/`, `2026/`, or `2027/`), next to that
-   folder's `en-US/` and `Resources/` folders:
-
-   ```
-   dotnet build BIMCamel/BIMCamel.csproj -c Release -p:NavisworksYear=2025
-   ```
-
-   then copy `BIMCamel/bin/Release/net48/BIMCamel.dll` into `BIMCamel.bundle/2025/`. The Navisworks
-   API is restored from NuGet, so no Navisworks install is needed to build.
-
-   You only need the year folder(s) for the version(s) you actually have; leave the rest empty.
-
-2. Copy the whole **`BIMCamel.bundle`** folder into your per-user plug-ins folder:
+1. Close Navisworks.
+2. Copy the whole **`Uttern.bundle`** folder into your per-user plug-ins folder:
 
    ```
    %AppData%\Autodesk\ApplicationPlugins\
    ```
 
-   (i.e. `C:\Users\<you>\AppData\Roaming\Autodesk\ApplicationPlugins\BIMCamel.bundle`)
-3. Restart Navisworks — the **BIMCamel** ribbon tab appears. (The tab is shared with the other
-   BIMCamel tools: if [Dyncamelo](https://github.com/mrshoma99-rgb/dyncamelo) is installed too, its
-   buttons sit on the same tab — both ribbon layouts declare the same `ID_Tab_BIMCamel` tab id.)
+   (that is, `C:\Users\<you>\AppData\Roaming\Autodesk\ApplicationPlugins\Uttern.bundle`)
+3. Start Navisworks. The **Uttern** ribbon tab appears.
+
+If Navisworks reports `PLUGIN_LOAD_02` / `0x80131515`, Windows kept the browser's "downloaded file"
+mark on the DLLs. Clear it in PowerShell with
+`Get-ChildItem "$env:APPDATA\Autodesk\ApplicationPlugins\Uttern.bundle" -Recurse -File | Unblock-File`.
+
+Uttern has its own DLL, bundle folder, plugin ids and ribbon tab, so it can be installed next to
+the original BIMCamel IFC Exporter without either replacing the other.
 
 ## Why one DLL per year
 
-A Navisworks plug-in must be **compiled against the API of the release it runs in** — 2024 uses
-`Autodesk.Navisworks.Api` **v21**, 2025 uses **v22**, 2026 uses **v23**, 2027 uses **v24**. A single DLL built against
-one year still _loads_ in the others (it shows up in the Plugin Manager), but its **ribbon tab
-silently fails to appear**, because Navisworks reflects over the `[RibbonLayout]`/`[RibbonTab]`/
-`[Command]` attributes and those attribute types don't resolve across a major API version. That's why
-each Navisworks year gets its own folder and its own matching build of `BIMCamel.dll`.
+A Navisworks plug-in must be **compiled against the API of the release it runs in**: 2024 uses
+`Autodesk.Navisworks.Api` v21, 2025 v22, 2026 v23, 2027 v24. A DLL built against one year still
+loads in the others, but its ribbon tab silently fails to appear. So each year folder holds its
+own build of `Uttern.dll`, and `PackageContents.xml` points each Navisworks release at its folder.
 
-Works on Navisworks 2024 / 2025 / 2026 / 2027 (Manage + Simulate), and on any UI language — Navisworks falls
-back to the `en-US` ribbon layout. No admin rights needed.
+## Origin
+
+Uttern is a fork of the [BIMCamel IFC Exporter](https://github.com/mrshoma99-rgb/bimcamel-ifc-exporter)
+by BIMCamel, under the MIT licence (see `LICENSE`). Source and changes:
+https://github.com/VilhelmH-git/bimcamel-ifc-exporter

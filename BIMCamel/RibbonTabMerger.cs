@@ -9,7 +9,12 @@ using System.Windows.Media;
 namespace BIMCamel
 {
     /// <summary>
-    /// Merges duplicate "BIMCamel" ribbon tabs into one.
+    /// Merges duplicate ribbon tabs into one. In this fork (Uttern) the tab is our own,
+    /// ID_Tab_Uttern / "Uttern", so it is never merged with upstream BIMCamel's tab and the two
+    /// plug-ins can be installed side by side; the merger only folds a duplicate Uttern tab. The
+    /// description below is upstream's, written for their shared ID_Tab_BIMCamel.
+    ///
+    /// Upstream: merges duplicate "BIMCamel" ribbon tabs into one.
     ///
     /// Every BIMCamel plug-in (this exporter, Dyncamelo, …) declares the same ribbon tab id
     /// (ID_Tab_BIMCamel) in its RibbonLayout xaml, but Navisworks composes each plug-in's layout
@@ -35,8 +40,8 @@ namespace BIMCamel
     /// </summary>
     internal static class RibbonTabMerger
     {
-        private const string TabId = "ID_Tab_BIMCamel";
-        private const string TabTitle = "BIMCamel";
+        private const string TabId = "ID_Tab_Uttern";
+        private const string TabTitle = "Uttern";
 
         private static bool _installed;
         private static int _lastCount = -1;
@@ -168,8 +173,8 @@ namespace BIMCamel
     /// anything. Also the earliest safe place to start it: the ribbon composes during startup and
     /// the merger waits on Idle for it.
     /// </summary>
-    [Autodesk.Navisworks.Api.Plugins.Plugin("BIMCamel.Startup", "BIMCamel",
-        DisplayName = "BIMCamel IFC Exporter startup")]
+    [Autodesk.Navisworks.Api.Plugins.Plugin("Uttern.Startup", "Uttern",
+        DisplayName = "Uttern startup")]
     public class BIMCamelStartup : Autodesk.Navisworks.Api.Plugins.EventWatcherPlugin
     {
         public override void OnLoaded() => RibbonTabMerger.Install();

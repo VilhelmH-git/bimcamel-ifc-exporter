@@ -252,7 +252,7 @@ namespace BIMCamel.Ifc
             Emit("ISO-10303-21;\n");
             Emit("HEADER;\n");
             Emit($"FILE_DESCRIPTION(('{mvd}'),'2;1');\n");
-            Emit($"FILE_NAME({Str(fileName)},'{ts}',({Str(author)}),(''),'BIMCamel IFC Exporter','BIMCamel','');\n");
+            Emit($"FILE_NAME({Str(fileName)},'{ts}',({Str(author)}),(''),'Uttern','Uttern','');\n");
             Emit($"FILE_SCHEMA(('{schemaId}'));\n");
             Emit("ENDSEC;\n");
             Emit("DATA;\n");

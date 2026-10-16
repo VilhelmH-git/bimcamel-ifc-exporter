@@ -13,15 +13,15 @@ namespace BIMCamel.UI
 {
     /// <summary>
     /// The About dialog — shown from the ribbon "About" button. Borderless black-and-white
-    /// BIMCamel window, the same design as the installer and as Dyncamelo's About, so every
-    /// BIMCamel tool presents itself identically. Built in code (no XAML) so the identical file
+    /// window in upstream BIMCamel's design. This fork is called Uttern; the dialog says so and
+    /// credits BIMCamel, whose MIT-licensed exporter it is built on. Built in code (no XAML) so the identical file
     /// can live in each plug-in's project regardless of its xaml build configuration; WPF layout
     /// (wrapping + SizeToContent) means nothing can clip.
     /// </summary>
     internal static class AboutDialog
     {
-        public const string Url = "https://www.bimcamel.com/Export-Navisworks-to-Ifc";
-        public const string DyncameloUrl = "https://www.bimcamel.com/plugins/dyncamelo";
+        public const string Url = "https://github.com/VilhelmH-git/bimcamel-ifc-exporter";
+        public const string UpstreamUrl = "https://www.bimcamel.com/Export-Navisworks-to-Ifc";
 
         // BIMCamel black-and-white palette (matches the installer).
         private static readonly Brush Ink = Fill("#0B0B0D");
@@ -37,7 +37,7 @@ namespace BIMCamel.UI
 
             var window = new Window
             {
-                Title = "About BIMCamel",
+                Title = "About Uttern",
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
                 Background = Brushes.Transparent,
@@ -57,7 +57,7 @@ namespace BIMCamel.UI
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var logo = LoadLogo("camel_32.png");
+            var logo = LoadLogo("otter_32.png");
             if (logo != null)
             {
                 var img = new Image { Source = logo, Width = 44, Height = 44, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 2, 14, 0) };
@@ -68,14 +68,14 @@ namespace BIMCamel.UI
             var titles = new StackPanel();
             titles.Children.Add(new TextBlock
             {
-                Text = "BIMCamel IFC Exporter",
+                Text = "Uttern",
                 Foreground = Paper,
                 FontSize = 20,
                 FontWeight = FontWeights.SemiBold,
             });
             titles.Children.Add(new TextBlock
             {
-                Text = "Fast, free, open-source Navisworks → IFC export (IFC4 / IFC2x3).",
+                Text = "Navisworks → IFC export (IFC4 / IFC2x3), with element-level instancing.",
                 Foreground = Paper70,
                 FontSize = 12.5,
                 TextWrapping = TextWrapping.Wrap,
@@ -91,14 +91,14 @@ namespace BIMCamel.UI
 
             body.Children.Add(new TextBlock
             {
-                Text = "Visit bimcamel.com for guides, more free BIM tools, updates and docs:",
+                Text = "Uttern is a fork of the free BIMCamel IFC Exporter (MIT licence). Source and changes:",
                 Foreground = Paper70,
                 FontSize = 13,
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 20, 0, 0),
             });
-            body.Children.Add(LinkBlock(Url, "bimcamel.com/Export-Navisworks-to-Ifc", Paper, 13.5, FontWeights.SemiBold, topMargin: 10));
-            body.Children.Add(LinkBlock(DyncameloUrl, "Also from BIMCamel: Dyncamelo — visual programming for Navisworks", Paper70, 12.5, FontWeights.Normal, topMargin: 6));
+            body.Children.Add(LinkBlock(Url, "github.com/VilhelmH-git/bimcamel-ifc-exporter", Paper, 13.5, FontWeights.SemiBold, topMargin: 10));
+            body.Children.Add(LinkBlock(UpstreamUrl, "The original: BIMCamel IFC Exporter — bimcamel.com", Paper70, 12.5, FontWeights.Normal, topMargin: 6));
 
             body.Children.Add(new Border { BorderBrush = Hairline, BorderThickness = new Thickness(0, 1, 0, 0), Margin = new Thickness(0, 20, 0, 0) });
 
@@ -108,7 +108,7 @@ namespace BIMCamel.UI
             footer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             footer.Children.Add(new TextBlock
             {
-                Text = "Version " + versionText + "   ·   Part of the BIMCamel toolset",
+                Text = "Version " + versionText + "   ·   Based on BIMCamel",
                 Foreground = Paper45,
                 FontSize = 12,
                 VerticalAlignment = VerticalAlignment.Center,

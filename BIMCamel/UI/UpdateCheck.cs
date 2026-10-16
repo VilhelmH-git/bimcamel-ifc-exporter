@@ -18,15 +18,16 @@ namespace BIMCamel.UI
     /// </summary>
     internal static class UpdateCheck
     {
-        private const string Owner = "mrshoma99-rgb";
-        private const string Repo = "bimcamel-ifc-exporter";
-        private const string ProductName = "BIMCamel IFC Exporter";
+        // The fork's own releases, not upstream BIMCamel's: offering theirs would replace this build.
+        private const string Owner = "VilhelmH-git";
+        private const string Repo = "Uttern-releases";
+        private const string ProductName = "Uttern";
         private const string DownloadPage = "https://github.com/" + Owner + "/" + Repo + "/releases/latest";
 
-        // %APPDATA%\BIMCamel\update-check.txt: "<last check yyyy-MM-dd>|<last version offered>"
+        // %APPDATA%\Uttern\update-check.txt: "<last check yyyy-MM-dd>|<last version offered>"
         private static readonly string StatePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "BIMCamel", "update-check.txt");
+            "Uttern", "update-check.txt");
 
         private static bool _ranThisSession;
 
@@ -91,7 +92,7 @@ namespace BIMCamel.UI
 
             var request = (HttpWebRequest)WebRequest.Create(
                 "https://api.github.com/repos/" + Owner + "/" + Repo + "/releases/latest");
-            request.UserAgent = "BIMCamel-IFC-Exporter-UpdateCheck";
+            request.UserAgent = "Uttern-UpdateCheck";
             request.Accept = "application/vnd.github+json";
             request.Timeout = 10000;
             request.ReadWriteTimeout = 10000;

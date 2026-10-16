@@ -74,7 +74,7 @@ namespace BIMCamel.Ifc
                 })
                 {
                     IsBackground = true,
-                    Name = "BIMCamel IFC writer"
+                    Name = "Uttern IFC writer"
                 };
                 worker.Start();
 
