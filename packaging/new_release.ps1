@@ -68,10 +68,15 @@ try {
     $head = git rev-parse HEAD
     # A dry run publishes nothing, so it may run before the fork and the releases repository exist.
     if (-not $DryRun) {
-        git fetch fork main 2>$null
+        Invoke-Native "git fetch fork" { git fetch fork main }
         if ($head -ne (git rev-parse fork/main)) { throw "main is not pushed to the fork (remote 'fork')." }
-        $null = & gh release view $tag --repo $releaseRepo --json url 2>$null
-        if ($LASTEXITCODE -eq 0) { throw "$releaseRepo already has $tag." }
+        # Windows PowerShell 5.1 turns a native command's stderr into a terminating error under
+        # "Stop", and "release not found" arrives on stderr: probe with "Continue".
+        $previous = $ErrorActionPreference; $ErrorActionPreference = "Continue"
+        $null = & gh release view $tag --repo $releaseRepo --json url 2>&1
+        $exists = $LASTEXITCODE -eq 0
+        $ErrorActionPreference = $previous
+        if ($exists) { throw "$releaseRepo already has $tag." }
     }
 
     # ── 2. Build per year ───────────────────────────────────────────────────────────────
