@@ -29,6 +29,15 @@ namespace BIMCamel.Geometry
         public static long UiPumps;           // number of pumps
         public static long ForeignFragmentsSkipped; // other instances' fragments left out (ComScope.OwnFragments)
         public static long OwnFragmentFallbacks;    // paths where no fragment matched, so all were kept
+        public static long SimplifyTicks;     // MeshDecimator, per UNIQUE mesh (instanced) or element (plain)
+        public static long SimplifiedMeshes;  // meshes run through it
+        public static long SimplifyTrisIn, SimplifyTrisOut;   // their triangles before / after
+        public static long SimplifyReused;    // instanced: meshes served from the simplified-mesh table
+
+        public static void SimplifyCount(int before, int after, long ticks)
+        {
+            SimplifiedMeshes++; SimplifyTrisIn += before; SimplifyTrisOut += after; SimplifyTicks += ticks;
+        }
 
         // E1 (fast instancing): how well the pre-read identity guess held up.
         public static long GeomReadsSkipped;  // fragment reads avoided by a candidate-key hit
@@ -62,6 +71,7 @@ namespace BIMCamel.Geometry
             Fragments = ComConverts = 0;
             UiTicks = 0; UiPumps = 0;
             ForeignFragmentsSkipped = OwnFragmentFallbacks = 0;
+            SimplifyTicks = SimplifiedMeshes = SimplifyTrisIn = SimplifyTrisOut = SimplifyReused = 0;
             GeomReadsSkipped = GeomVerifications = GeomMismatches = GeomEvictions = 0;
             GeomWriteTicks = PropWriteTicks = QtyWriteTicks = 0;
             ValidateTicks = 0;

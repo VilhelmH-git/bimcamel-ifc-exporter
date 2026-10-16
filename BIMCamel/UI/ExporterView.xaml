@@ -572,6 +572,11 @@
                   </StackPanel>
                   <TextBlock Style="{StaticResource Lbl}" Text="Geometry quality"/>
                   <ComboBox x:Name="CmbQuality" ToolTip="Vertex welding tolerance and stored coordinate precision. 'Balanced' suits most models; 'Small file' welds more coarsely, 'High detail' preserves finer detail and writes larger files. Navisworks fixes the mesh tessellation when the NWC is made, so this cannot add detail that is not already there."/>
+                  <StackPanel Orientation="Horizontal" Margin="0,9,0,0">
+                    <CheckBox x:Name="ChkSimplify" Content="Simplify meshes within" VerticalAlignment="Center" ToolTip="Reduce heavily tessellated objects before they are written: triangles are removed from flat and gently curved regions while no surface moves further than this distance. Each unique shape is simplified once and every copy of it reuses the result.&#x0a;&#x0a;Unlike 'Skip geometry smaller than' nothing is left out - every object is still there, with fewer triangles. Off by default because it changes the shapes; the report gives the triangle count before and after."/>
+                    <TextBox x:Name="TxtSimplifyMm" Text="10" Width="46" Margin="8,0,6,0"/>
+                    <TextBlock Text="mm" VerticalAlignment="Center" Foreground="{DynamicResource Muted}"/>
+                  </StackPanel>
                   <StackPanel Orientation="Horizontal" Margin="0,9,0,0"
                               ToolTip="Split the output into multiple files once it grows past this size.">
                     <CheckBox x:Name="ChkSplit" Content="Split when larger than" VerticalAlignment="Center"/>

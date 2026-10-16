@@ -127,6 +127,8 @@ namespace BIMCamel.UI
             // filter REMOVES objects — both change what a recipient sees, so both default OFF.
             ChkZip.IsChecked = true; ChkSkipEmptyProps.IsChecked = true;
             ChkShareTypeProps.IsChecked = false; ChkMinSize.IsChecked = false;
+            // Simplification changes the shapes a recipient sees, so it is opt-in like the size filter.
+            ChkSimplify.IsChecked = false;
             ChkProps.IsChecked = true; ChkMaterials.IsChecked = true; ChkQuantities.IsChecked = true; ChkSplit.IsChecked = false;
             TxtE.Text = TxtN.Text = TxtElev.Text = TxtRot.Text = "0";
             TxtSurveyE.Text = TxtSurveyN.Text = TxtSurveyElev.Text = "0";
@@ -858,6 +860,9 @@ namespace BIMCamel.UI
             double minSizeMetres = ChkMinSize.IsChecked == true
                 && double.TryParse(TxtMinSizeMm.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var mm) && mm > 0
                 ? mm / 1000.0 : 0;
+            double simplifyMetres = ChkSimplify.IsChecked == true
+                && double.TryParse(TxtSimplifyMm.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var smm) && smm > 0
+                ? smm / 1000.0 : 0;
 
             // v5 E7: the extractor runs here, on the Navisworks UI thread (the read API is STA and
             // cannot move); the writer runs behind ExportPipeline on a background thread. Both
@@ -871,6 +876,7 @@ namespace BIMCamel.UI
                 opts.QtyScale = 0;
                 opts.FastInstancing = ChkFastInstancing.IsChecked == true;
                 opts.MinFragmentSize = minSizeMetres;
+                opts.SimplifyTol = simplifyMetres;
                 int mergeAbove = ChkMergeParts.IsChecked == true ? MergePartsAbove : 0;
                 var stream = InstancedExtractor.ExtractStream(items, unitScale, opts, p => Tick(p, items.Count, verb));
                 ExportPipeline.Run(stream, s =>
@@ -882,6 +888,7 @@ namespace BIMCamel.UI
                 // Plain: one element, one weld, one measurement — folded into the weld (v5 E4).
                 opts.QtyScale = quantities ? unitScale : 0;
                 opts.MinFragmentSize = minSizeMetres / unitScale;
+                opts.SimplifyTol = simplifyMetres / unitScale;
                 var stream = MeshExtractor.ExtractStream(items, opts, p => Tick(p, items.Count, verb));
                 ExportPipeline.Run(stream, s =>
                     IfcExporter.Export(basePath, schema, s, author, unitScale, coords, quantities, coordDecimals, geomMin, names, splitLimit, summary, shareTypeProps));
@@ -1660,7 +1667,14 @@ namespace BIMCamel.UI
             sb.AppendLine($"Site offset : [{s.OffsetX:N3}, {s.OffsetY:N3}, {s.OffsetZ:N3}] m");
             sb.AppendLine($"Georef      : {GeorefLine(s, schema)}");
             sb.AppendLine($"Elements    : {s.ElementCount:N0}");
-            sb.AppendLine($"Triangles   : {s.TriangleCount:N0}");
+            sb.AppendLine(s.SourceTriangleCount > s.TriangleCount
+                ? $"Triangles   : {s.TriangleCount:N0}  (simplified from {s.SourceTriangleCount:N0}, {100.0 * s.TriangleCount / s.SourceTriangleCount:0.#} %)"
+                : $"Triangles   : {s.TriangleCount:N0}");
+            // Unique meshes (instanced) or elements (plain): what the simplifier itself saw.
+            if (ET.SimplifiedMeshes > 0)
+                sb.AppendLine($"Simplify    : {ET.SimplifiedMeshes:N0} mesh(es), {ET.SimplifyTrisIn:N0} → {ET.SimplifyTrisOut:N0} triangles before placement"
+                              + (ET.SimplifyReused > 0 ? $" · {ET.SimplifyReused:N0} reuse(s)" : "")
+                              + $" · {ET.Ms(ET.SimplifyTicks):N0} ms");
             // Anything that did not reach the IFC is stated explicitly — elements used to vanish
             // with no trace anywhere in the UI or the report.
             var issues = BIMCamel.Geometry.ExportIssues.Report();
@@ -1851,6 +1865,7 @@ namespace BIMCamel.UI
             Zip = ChkZip.IsChecked == true, ShareTypeProps = ChkShareTypeProps.IsChecked == true,
             SkipEmptyProps = ChkSkipEmptyProps.IsChecked == true,
             MinSize = ChkMinSize.IsChecked == true, MinSizeMm = (TxtMinSizeMm.Text ?? "").Trim(),
+            Simplify = ChkSimplify.IsChecked == true, SimplifyMm = (TxtSimplifyMm.Text ?? "").Trim(),
             Validate = ChkValidate.IsChecked == true, Quantities = ChkQuantities.IsChecked == true, Mapping = GridToText(),
             Crs = (TxtCrs.Text ?? "").Trim(), SurveyE = ParseD(TxtSurveyE.Text), SurveyN = ParseD(TxtSurveyN.Text), SurveyElev = ParseD(TxtSurveyElev.Text),
             Roles = RolesToText(), ParamRules = ParamRulesToText(),
@@ -1877,6 +1892,8 @@ namespace BIMCamel.UI
             ChkZip.IsChecked = p.Zip; ChkShareTypeProps.IsChecked = p.ShareTypeProps;
             ChkSkipEmptyProps.IsChecked = p.SkipEmptyProps;
             ChkMinSize.IsChecked = p.MinSize;
+            ChkSimplify.IsChecked = p.Simplify;
+            if (!string.IsNullOrWhiteSpace(p.SimplifyMm)) TxtSimplifyMm.Text = p.SimplifyMm;
             if (!string.IsNullOrWhiteSpace(p.MinSizeMm)) TxtMinSizeMm.Text = p.MinSizeMm;
             TxtCrs.Text = p.Crs ?? ""; TxtSurveyE.Text = Inv(p.SurveyE); TxtSurveyN.Text = Inv(p.SurveyN); TxtSurveyElev.Text = Inv(p.SurveyElev);
             if (!string.IsNullOrWhiteSpace(p.ProjectName)) TxtProject.Text = p.ProjectName;

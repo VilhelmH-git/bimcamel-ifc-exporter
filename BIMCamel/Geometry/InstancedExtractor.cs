@@ -13,6 +13,8 @@ namespace BIMCamel.Geometry
         public List<double> Vertices = new List<double>();
         public List<int> Indices = new List<int>();
         public Data.Material? Material; // surface colour (folded into the dedup key so colour variants split)
+        /// <summary>Triangles before simplification; 0 = not simplified (same as Indices).</summary>
+        public int SourceTriangles;
     }
 
     /// <summary>
@@ -85,6 +87,8 @@ namespace BIMCamel.Geometry
 
             // Opt-in shape cache that lets a repeated element skip its triangle reads (v5 E1).
             var cache = o.FastInstancing ? new GeometryCache(o.FastInstancingBudgetBytes) : null;
+            // Simplified meshes by source key, so each unique shape is simplified once.
+            var simplified = o.SimplifyTol > 0 ? new SimplifiedTable(o.SimplifyTol) : null;
 
             // One COM conversion per CHUNK of items rather than one per item (v5 E3).
             foreach (var chunk in ComScope.Chunks(items, ComScope.ChunkSize))
@@ -102,7 +106,7 @@ namespace BIMCamel.Geometry
                         var mine = paths.TryGetValue(item, out var lst)
                             ? (IEnumerable<InwOaPath3>)lst
                             : ComScope.PathsFor(item);
-                        el = BuildElement(item, mine, unitScale, o, cache, hasClass, hasCode, hasGroup, hasRoles);
+                        el = BuildElement(item, mine, unitScale, o, cache, simplified, hasClass, hasCode, hasGroup, hasRoles);
                     }
                     catch (Exception ex) { ExportIssues.Fail(MeshExtractor.SafeName(item), ex); el = null; }
 
@@ -115,7 +119,7 @@ namespace BIMCamel.Geometry
 
         /// <summary>Reads one item's instanced meshes + semantics; null when it contributes nothing.</summary>
         private static InstancedElement? BuildElement(ModelItem item, IEnumerable<InwOaPath3> comPaths, double unitScale,
-                                                     ExtractOptions o, GeometryCache? cache,
+                                                     ExtractOptions o, GeometryCache? cache, SimplifiedTable? simplified,
                                                      bool hasClass, bool hasCode, bool hasGroup, bool hasRoles)
         {
             string key = hasClass || hasCode || hasGroup ? Collect.ItemCollector.ItemKey(item, o.KeyCache) : "";
@@ -148,7 +152,7 @@ namespace BIMCamel.Geometry
             }
             else
             {
-                var fresh = ReadFragments(el, frags, unitScale, itemMat, o.WeldTol, o.MinFragmentSize);
+                var fresh = ReadFragments(el, frags, unitScale, itemMat, o.WeldTol, o.MinFragmentSize, simplified);
                 collapsedFrags = fresh.CollapsedFrags;
 
                 if (verifying)
@@ -202,7 +206,7 @@ namespace BIMCamel.Geometry
         /// instances. Also returns the shape, ready to cache.
         /// </summary>
         private static CachedShape ReadFragments(InstancedElement el, List<InwOaFragment3> frags, double unitScale,
-                                                 Data.Material? itemMat, double weldTol, double minSize)
+                                                 Data.Material? itemMat, double weldTol, double minSize, SimplifiedTable? simplified)
         {
             var shape = new CachedShape();
             for (int fi = 0; fi < frags.Count; fi++)
@@ -238,6 +242,7 @@ namespace BIMCamel.Geometry
                 if (li.Count == 0) { shape.CollapsedFrags++; continue; }
 
                 var dk = Key(lm);
+                if (simplified != null) simplified.Apply(ref lm, ref dk);
                 shape.FragIndex.Add(fi);
                 shape.Meshes.Add(lm);
                 shape.Keys.Add(dk);
@@ -263,6 +268,45 @@ namespace BIMCamel.Geometry
                 el.Instances.Add(Place(frags[fi], shape.Meshes[i], shape.Keys[i], unitScale));
             }
             return shape.CollapsedFrags;
+        }
+
+        /// <summary>
+        /// Simplified meshes by the content key of the welded source mesh. Simplification is
+        /// deterministic, so the first occurrence of a shape is simplified and every later one
+        /// (another fragment, another element) gets the same <see cref="LocalMesh"/> back. The key
+        /// handed on is the source key with the tolerance mixed in: the shape still dedups exactly
+        /// as before, and the revision manifest sees a change when the setting changes.
+        /// </summary>
+        private sealed class SimplifiedTable
+        {
+            private const long BudgetBytes = 256L * 1024 * 1024;   // past this, simplify again rather than keep
+            private readonly Dictionary<DedupKey, LocalMesh> _done = new Dictionary<DedupKey, LocalMesh>();
+            private readonly double _tol;
+            private readonly ulong _salt;
+            private long _bytes;
+
+            public SimplifiedTable(double tol)
+            {
+                _tol = tol;
+                _salt = unchecked((ulong)BitConverter.DoubleToInt64Bits(tol) * 0x9E3779B97F4A7C15UL);
+            }
+
+            public void Apply(ref LocalMesh lm, ref DedupKey key)
+            {
+                var src = key;
+                key = new DedupKey(src.H0 ^ _salt, src.H1 ^ (_salt >> 7) ^ 0xD1B54A32D192ED03UL, src.V, src.T);
+                if (_done.TryGetValue(src, out var hit)) { lm = hit; ExportTiming.SimplifyReused++; return; }
+
+                long t = ExportTiming.Now;
+                int before = lm.Indices.Count / 3;
+                var v = lm.Vertices; var i = lm.Indices;
+                if (MeshDecimator.Simplify(ref v, ref i, _tol) && i.Count > 0)
+                    lm = new LocalMesh { Vertices = v, Indices = i, Material = lm.Material, SourceTriangles = before };
+                ExportTiming.SimplifyCount(before, lm.Indices.Count / 3, ExportTiming.Now - t);
+
+                long size = GeometryCache.SizeOf(lm);
+                if (_bytes + size <= BudgetBytes) { _done[src] = lm; _bytes += size; }
+            }
         }
 
         /// <summary>Places one local mesh using its fragment's local→world matrix.</summary>
